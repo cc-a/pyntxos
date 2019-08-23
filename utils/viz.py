@@ -1,7 +1,7 @@
 import folium
 
 
-def make_and_save_map(data, num_restaurants=None, phone_number=False):
+def make_and_save_map(data, route=[], num_restaurants=None, phone_number=False):
 
     m = folium.Map(location=[43.2590929, -2.9244257])  # , zoom_start=20)
 
@@ -33,20 +33,22 @@ def make_and_save_map(data, num_restaurants=None, phone_number=False):
             tooltip=tooltip,
         ).add_to(m)
 
-    for n in range(len(data) - 1):
+    for d1, d2 in zip(route, route[1:]):
         folium.ColorLine(
             [
-                (data[n]["latitude"], data[n]["longitude"]),
-                (data[n + 1]["latitude"], data[n + 1]["longitude"]),
+                (d1["latitude"], d1["longitude"]),
+                (d2["latitude"], d2["longitude"]),
             ],
             [1],
             weight=3,
             colormap=["green", "red"],
         ).add_to(m)
+
+    bound_data = route if route else data
     m.fit_bounds(
         [
-            [min([i["latitude"] for i in data]), min([i["longitude"] for i in data])],
-            [max([i["latitude"] for i in data]), max([i["longitude"] for i in data])],
+            [min([i["latitude"] for i in bound_data]), min([i["longitude"] for i in bound_data])],
+            [max([i["latitude"] for i in bound_data]), max([i["longitude"] for i in bound_data])],
         ]
     )
 
